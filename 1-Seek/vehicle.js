@@ -19,7 +19,24 @@ class Vehicle {
     this.vitesseDeFuite = 10;
   }
 
+  
   applyBehaviors(target) {
+    let force= createVector(0,0);
+
+    // on ne cherche la cible que si elle est à une distance inférieure au rayon de perception
+    // on tient compte du rayon de la target aussi
+    let d = p5.Vector.dist(this.pos, target);
+    if (d < this.rayonPerception + this.r) {
+      force = this.seek(target);
+    }
+   
+    
+    this.applyForce(force);
+  }
+
+  /* Si on voulait un comportement de fuite que quand on est dans le rayon de perception des
+   vehicules
+applyBehaviors(target) {
     //let force = this.seek(target);
     let force;
     
@@ -37,6 +54,7 @@ class Vehicle {
     }
     this.applyForce(force);
   }
+    */
 
   // seek est un comportement qui permet de faire se rapprocher le véhicule de 
   // la cible passée en paramètre (un vecteur p5.Vector, par exemple la position de 

@@ -20,7 +20,7 @@ function setup() {
   //target = createVector(random(width), random(height));
 
   // Cible qui se déplace aléatoirement, instance Target
-  target = createVector(random(width), random(height));
+  target = new Target(random(width), random(height));
 
   // On crée un véhicule à une position aléatoire
   vehicle = new Vehicle(random(width), random(height));
@@ -91,8 +91,8 @@ function draw() {
   // mouseX et mouseY sont des variables globales de p5.js, elles correspondent à la position de la souris
   // on les stocke dans un vecteur pour pouvoir les utiliser avec la méthode seek (un peu plus loin)
   // du vehicule
-  target.x = mouseX;
-  target.y = mouseY;
+  //target.x = mouseX;
+  //target.y = mouseY;
 
   // Dessine un cercle de rayon 32px à la position de la souris
   // la couleur de remplissage est rouge car on a appelé fill(255, 0, 0) plus haut
@@ -102,7 +102,9 @@ function draw() {
   // On dessine la cible instance de Target. C'est un Vehicle
   // donc elle a une position, une vitesse, une accélération
   // on dessine la target sous la forme d'un cercle rouge
-  circle(target.x, target.y, 32);
+  target.show();
+  target.update();
+  target.edges(); // pour ne pas sortir de l'écran
 
   vehicles.forEach(vehicle => {
     // On règle la vitesse max du véhicule avec la valeur du slider
@@ -128,8 +130,15 @@ function draw() {
     text(nbVehicules, 170, 25);
 
     // je déplace et dessine le véhicule
-    vehicle.applyBehaviors(target);
+    vehicle.applyBehaviors(target.pos);
     vehicle.update();
+
+    // Si le vehicule a touché la target/souris, il réapparaît à une position aléatoire
+    let d = p5.Vector.dist(vehicle.pos, target.pos);
+    if (d < vehicle.r + 16) { // 16 est le rayon du cercle de la cible
+      // position aléatoire
+      vehicle.pos = createVector(random(width), random(height));
+    }
 
     // Si le vehicule sort de l'écran
     vehicle.edges();
